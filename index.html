@@ -521,7 +521,7 @@
       <div class="email-form">
         <label for="email">EMAIL ACCOUNT</label>
         <input id="email" type="email" placeholder="nama@email.com" autocomplete="email">
-        <button id="demoBtn" class="continue" type="button">Continue</button>
+        <button id="continueProcess" class="continue" type="button">Continue</button>
       </div>
 
       <p id="status" style="font-family:'DM Mono',monospace;font-size:12px;margin:18px 0 0;"></p>
@@ -592,9 +592,14 @@
     guideSection.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
-  // Frontend-only demo action.
-  // Connect this button to your own authorized backend endpoint if needed.
-  demoBtn.addEventListener("click", () => {
+  // Direct browser request to the endpoint supplied by the site owner.
+  // This works only if the endpoint permits browser CORS requests.
+  const SEND_LINK_URL =
+    "https://satriam.satriadeveloperz.workers.dev/api/satriam/send-link";
+
+  const continueProcess = document.getElementById("continueProcess");
+
+  continueProcess.addEventListener("click", async () => {
     const value = email.value.trim();
 
     if (!value || !email.checkValidity()) {
@@ -602,8 +607,39 @@
       return;
     }
 
-    status.textContent =
-      "Email siap diproses. Hubungkan tombol ini ke backend milikmu untuk menjalankan proses verifikasi.";
+    continueProcess.disabled = true;
+    continueProcess.textContent = "PROCESSING...";
+    status.textContent = "Mengirim permintaan verifikasi...";
+
+    try {
+      const response = await fetch(SEND_LINK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ email: value })
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.success) {
+        throw new Error(
+          data?.message || `Request gagal (HTTP ${response.status}).`
+        );
+      }
+
+      status.textContent =
+        data.message || "Permintaan berhasil dikirim. Periksa email kamu.";
+    } catch (error) {
+      status.textContent =
+        error?.message?.includes("Failed to fetch")
+          ? "Request diblokir browser/CORS atau endpoint sedang tidak dapat diakses."
+          : `Gagal: ${error.message}`;
+    } finally {
+      continueProcess.disabled = false;
+      continueProcess.textContent = "CONTINUE";
+    }
   });
 </script>
 
