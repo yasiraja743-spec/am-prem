@@ -4,12 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#f4f0e8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; form-action 'self'; base-uri 'self'" />
   <title>Lucifer AM PREMIUM</title>
-
-  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="icon" type="image/png" href="data:image/png;base64,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" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-
     :root {
       --paper: #f4f0e8;
       --ink: #111111;
@@ -33,7 +31,7 @@
         linear-gradient(rgba(17,17,17,.045) 1px, transparent 1px) 0 0 / 24px 24px,
         var(--paper);
       color: var(--ink);
-      font-family: "Space Grotesk", sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
     button, input { font: inherit; }
@@ -85,7 +83,7 @@
       border: 2px solid var(--ink);
       padding: 7px 10px;
       background: var(--white);
-      font-family: "DM Mono", monospace;
+      font-family: "Courier New", Courier, monospace;
       font-size: 11px;
       box-shadow: 3px 3px 0 var(--ink);
     }
@@ -119,7 +117,7 @@
       background: var(--red);
       border: var(--border);
       padding: 8px 12px;
-      font-family: "DM Mono", monospace;
+      font-family: "Courier New", Courier, monospace;
       font-size: 12px;
       font-weight: 500;
       box-shadow: 4px 4px 0 var(--ink);
@@ -201,7 +199,7 @@
     }
 
     .section-title span {
-      font-family: "DM Mono", monospace;
+      font-family: "Courier New", Courier, monospace;
       font-size: 12px;
     }
 
@@ -261,7 +259,7 @@
       place-items: center;
       background: var(--white);
       font-weight: 800;
-      font-family: "DM Mono", monospace;
+      font-family: "Courier New", Courier, monospace;
     }
 
     .notice h3 { margin: 0 0 8px; }
@@ -353,7 +351,7 @@
     }
 
     .email-form label {
-      font-family: "DM Mono", monospace;
+      font-family: "Courier New", Courier, monospace;
       font-size: 12px;
     }
 
@@ -376,7 +374,7 @@
       display: flex;
       justify-content: space-between;
       gap: 20px;
-      font-family: "DM Mono", monospace;
+      font-family: "Courier New", Courier, monospace;
       font-size: 11px;
     }
 
@@ -596,81 +594,33 @@
     guideSection.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
-  // Verification flow: email -> noreply magic link -> verify.
-  const SEND_LINK_URL =
-    "https://satriam.satriadeveloperz.workers.dev/api/satriam/send-link";
-  const VERIFY_LINK_URL =
-    "https://satriam.satriadeveloperz.workers.dev/api/satriam/verify-link";
-
+  // Local-only flow: no external endpoint, fetch(), XHR, or third-party request.
+  // The page only validates input locally and never sends the email or verification link.
   const continueProcess = document.getElementById("continueProcess");
   const verifyProcess = document.getElementById("verifyProcess");
   const emailStep = document.getElementById("emailStep");
   const linkStep = document.getElementById("linkStep");
   const magicLink = document.getElementById("magicLink");
 
-  continueProcess.addEventListener("click", async () => {
+  continueProcess.addEventListener("click", () => {
     const value = email.value.trim();
     if (!value || !email.checkValidity()) {
       status.textContent = "Masukkan alamat email yang valid.";
       return;
     }
-    continueProcess.disabled = true;
-    continueProcess.textContent = "SENDING...";
-    status.textContent = "Mengirim link verifikasi ke email...";
-    try {
-      const response = await fetch(SEND_LINK_URL, {
-        method: "POST",
-        headers: {"Content-Type": "application/json", "Accept": "application/json"},
-        body: JSON.stringify({ email: value })
-      });
-      const data = await response.json().catch(() => null);
-      if (!response.ok || !data?.success) {
-        throw new Error(data?.message || `Request gagal (HTTP ${response.status}).`);
-      }
-      emailStep.classList.add("hidden");
-      linkStep.classList.remove("hidden");
-      status.textContent = data.message || "Link verifikasi sudah dikirim. Cek email noreply kamu.";
-      magicLink.focus();
-    } catch (error) {
-      status.textContent = error?.message?.includes("Failed to fetch")
-        ? "Request diblokir browser/CORS atau endpoint sedang tidak dapat diakses."
-        : `Gagal: ${error.message}`;
-    } finally {
-      continueProcess.disabled = false;
-      continueProcess.textContent = "CONTINUE";
-    }
+    emailStep.classList.add("hidden");
+    linkStep.classList.remove("hidden");
+    status.textContent = "Email disimpan hanya di halaman ini. Tidak ada request yang dikirim.";
+    magicLink.focus();
   });
 
-  verifyProcess.addEventListener("click", async () => {
-    const value = email.value.trim();
+  verifyProcess.addEventListener("click", () => {
     const link = magicLink.value.trim();
-    if (!link || !link.startsWith("http")) {
+    if (!link || !/^https?:\/\//i.test(link)) {
       status.textContent = "Tempel link verifikasi yang valid dari email noreply.";
       return;
     }
-    verifyProcess.disabled = true;
-    verifyProcess.textContent = "VERIFYING...";
-    status.textContent = "Memverifikasi link...";
-    try {
-      const response = await fetch(VERIFY_LINK_URL, {
-        method: "POST",
-        headers: {"Content-Type": "application/json", "Accept": "application/json"},
-        body: JSON.stringify({ email: value, magicLink: link })
-      });
-      const data = await response.json().catch(() => null);
-      if (!response.ok || !data?.success) {
-        throw new Error(data?.message || `Verifikasi gagal (HTTP ${response.status}).`);
-      }
-      status.textContent = "Verifikasi berhasil. " +
-        (data.message || "Proses akses dapat dilanjutkan.");
-    } catch (error) {
-      status.textContent = error?.message?.includes("Failed to fetch")
-        ? "Request diblokir browser/CORS atau endpoint sedang tidak dapat diakses."
-        : `Gagal verifikasi: ${error.message}`;
-    } finally {
-      verifyProcess.disabled = false;
-      verifyProcess.textContent = "VERIFY & CONTINUE";
-    }
+    status.textContent = "Link diterima secara lokal. Tidak ada endpoint atau data yang dikirim dari halaman ini.";
   });
 
 </script>
